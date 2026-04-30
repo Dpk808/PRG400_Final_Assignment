@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recommendations - Library</title>
+    <style>
+        :root {
+            --ink: #0f172a;
+            --muted: #475569;
+            --paper: #ffffff;
+            --paper-2: #f8fafc;
+            --accent: #3b82f6;
+            --accent-2: #60a5fa;
+            --accent-3: #1e3a8a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --shadow: 0 24px 60px rgba(15, 23, 42, 0.15);
+            --glass: rgba(255, 255, 255, 0.5);
+            --glass-strong: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.65);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at 15% 30%, rgba(37, 99, 235, 0.15), transparent 40%),
+                        radial-gradient(circle at 85% 70%, rgba(59, 130, 246, 0.15), transparent 40%),
+                        radial-gradient(circle at 50% 50%, rgba(96, 165, 250, 0.1), transparent 60%),
+                        linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #bfdbfe 100%);
+            color: var(--ink);
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.85);
+            color: var(--accent-3);
+            padding: 18px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(26px) saturate(1.2);
+            -webkit-backdrop-filter: blur(26px) saturate(1.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .navbar h1 {
+            font-family: inherit;
+            font-size: 28px;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar a {
+            color: var(--accent-3);
+            border: 1px solid rgba(30, 58, 138, 0.15);
+            padding: 8px 14px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-size: 13px;
+            background: rgba(255, 255, 255, 0.5);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .navbar a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+            background: rgba(59, 130, 246, 0.08);
+        }
+
+        .container {
+            max-width: 980px;
+            margin: 36px auto 60px;
+            background: var(--glass);
+            padding: 28px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .header h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 30px;
+            color: var(--accent-3);
+        }
+
+        .header p {
+            color: var(--muted);
+        }
+
+        .rec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+        }
+
+        .rec {
+            padding: 16px;
+            border-radius: 16px;
+            background: var(--glass-strong);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 20px rgba(24, 34, 26, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            backdrop-filter: blur(20px) saturate(1.15);
+            -webkit-backdrop-filter: blur(20px) saturate(1.15);
+        }
+
+        .title {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .meta {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .confidence {
+            font-size: 12px;
+            color: var(--muted);
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .btn {
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+            color: #ffffff;
+            text-decoration: none;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.39);
+        }
+
+        .availability {
+            font-size: 13px;
+            color: var(--success);
+        }
+
+        .availability.out {
+            color: var(--warning);
+        }
+
+        .footer-link {
+            margin-top: 20px;
+            display: inline-flex;
+            color: var(--muted);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @media (max-width: 720px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>📚 Recommendations</h1>
+        <a href="{{ url_for('web.student_dashboard') }}">Back to dashboard</a>
+    </div>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h2>Your personalized picks</h2>
+                <p>Based on your survey answers, here are 5 books you might enjoy.</p>
+            </div>
+            <div class="confidence">Confidence scores shown per recommendation</div>
+        </div>
+        <div class="rec-grid">
+            {% for r in recommendations %}
+                <div class="rec">
+                    <div class="title">{{ r.suggested_title }} — <span style="font-weight:400;">{{ r.suggested_author }}</span></div>
+                    <div class="meta">{{ r.reason }}</div>
+                    <div class="confidence">Confidence: {{ '%.2f'|format(r.confidence) }}</div>
+                    <div>
+                        {% if r.in_library %}
+                            <form method="POST" action="{{ url_for('web.request_book', book_id=r.book_id) }}" style="display:inline;">
+                                <button class="btn" type="submit">Request this book</button>
+                            </form>
+                            <div class="availability">In library — {{ r.available_count }} available</div>
+                        {% else %}
+                            <div class="availability out">Not in library</div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <a class="footer-link" href="{{ url_for('web.student_dashboard') }}">Back to dashboard</a>
+    </div>
+</body>
+</html>

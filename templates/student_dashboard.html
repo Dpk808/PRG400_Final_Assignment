@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Dashboard - Library System</title>
+    <style>
+        :root {
+            --ink: #0f172a;
+            --muted: #475569;
+            --paper: #ffffff;
+            --paper-2: #f8fafc;
+            --accent: #3b82f6;
+            --accent-2: #60a5fa;
+            --accent-3: #1e3a8a;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --shadow: 0 24px 60px rgba(15, 23, 42, 0.15);
+            --glass: rgba(255, 255, 255, 0.5);
+            --glass-strong: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.65);
+            --glass-dark: rgba(30, 58, 138, 0.45);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at 15% 30%, rgba(37, 99, 235, 0.15), transparent 40%),
+                        radial-gradient(circle at 85% 70%, rgba(59, 130, 246, 0.15), transparent 40%),
+                        radial-gradient(circle at 50% 50%, rgba(96, 165, 250, 0.1), transparent 60%),
+                        linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #bfdbfe 100%);
+            color: var(--ink);
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.85);
+            color: var(--accent-3);
+            padding: 18px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(26px) saturate(1.2);
+            -webkit-backdrop-filter: blur(26px) saturate(1.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .navbar h1 {
+            font-family: inherit;
+            font-size: 28px;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .user-info {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .nav-cta,
+        .logout-btn {
+            color: var(--accent-3);
+            border: 1px solid rgba(30, 58, 138, 0.15);
+            padding: 8px 14px;
+            border-radius: 999px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 13px;
+            transition: transform 0.2s ease, background 0.2s ease;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .nav-cta {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .nav-cta:hover,
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+            background: rgba(59, 130, 246, 0.08);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 32px auto 60px;
+            padding: 0 24px;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 999px;
+            margin-bottom: 18px;
+            font-size: 14px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-strong);
+            transition: opacity 0.3s ease;
+            box-shadow: 0 10px 24px rgba(31, 42, 32, 0.08);
+            backdrop-filter: blur(20px) saturate(1.15);
+            -webkit-backdrop-filter: blur(20px) saturate(1.15);
+        }
+
+        .alert-success {
+            background-color: rgba(31, 107, 74, 0.12);
+            color: var(--success);
+            border-color: rgba(31, 107, 74, 0.3);
+        }
+
+        .alert-error {
+            background-color: rgba(162, 54, 47, 0.12);
+            color: var(--danger);
+            border-color: rgba(162, 54, 47, 0.3);
+        }
+
+        .alert-warning {
+            background-color: rgba(154, 107, 26, 0.12);
+            color: var(--warning);
+            border-color: rgba(154, 107, 26, 0.3);
+        }
+
+        .section {
+            background: var(--glass);
+            padding: 28px;
+            border-radius: 18px;
+            margin-bottom: 26px;
+            box-shadow: var(--shadow);
+            animation: rise 0.6s ease both;
+            backdrop-filter: blur(24px) saturate(1.2);
+            -webkit-backdrop-filter: blur(24px) saturate(1.2);
+            border: 1px solid var(--glass-border);
+        }
+
+        .section h2 {
+            font-family: inherit;
+            color: var(--accent-3);
+            margin-bottom: 18px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+            margin-bottom: 26px;
+        }
+
+        .stat-card {
+            background: var(--glass);
+            color: var(--accent-3);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(20px) saturate(1.15);
+            -webkit-backdrop-filter: blur(20px) saturate(1.15);
+            border: 1px solid var(--glass-border);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            inset: auto -40% -60% auto;
+            width: 160px;
+            height: 160px;
+            background: rgba(59, 130, 246, 0.08);
+            border-radius: 50%;
+        }
+
+        .stat-card h3 {
+            font-size: 13px;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            color: var(--muted);
+        }
+
+        .stat-card .value {
+            font-size: 30px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 18px;
+        }
+
+        .book-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 10px 20px rgba(24, 34, 26, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .book-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 30px rgba(24, 34, 26, 0.12);
+        }
+
+        .book-card h3 {
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+
+        .book-card p {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .request-btn {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.39);
+        }
+
+        .request-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+        }
+
+        .request-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #cbd5e1;
+            color: #f1f5f9;
+            box-shadow: none;
+        }
+
+        .requests-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .requests-table th {
+            background: rgba(226, 232, 240, 0.7);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--ink);
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        .requests-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .status-pending {
+            background: rgba(154, 107, 26, 0.15);
+            color: var(--warning);
+        }
+
+        .status-approved {
+            background: rgba(31, 107, 74, 0.15);
+            color: var(--success);
+        }
+
+        .status-overdue {
+            background: rgba(162, 54, 47, 0.15);
+            color: var(--danger);
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: var(--muted);
+            font-size: 16px;
+        }
+
+        @keyframes rise {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 720px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .navbar-right {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>📚 BookSphere Library</h1>
+        <div class="navbar-right">
+            <div class="user-info">👤 Welcome, <strong>{{ current_user.username }}</strong> (Student)</div>
+            <a href="{{ url_for('web.survey') }}" class="nav-cta">Take a quick reading survey</a>
+            <a href="{{ url_for('web.logout') }}" class="logout-btn">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Stats Section -->
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Active Books</h3>
+                <div class="value">{{ active_requests_count }}/3</div>
+            </div>
+            <div class="stat-card">
+                <h3>Books Requested</h3>
+                <div class="value">{{ requests|length }}</div>
+            </div>
+        </div>
+        
+        <!-- My Requests Section -->
+        <div class="section">
+            <h2>📖 My Book Requests</h2>
+            {% if requests %}
+                <table class="requests-table">
+                    <thead>
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Author</th>
+                            <th>Status</th>
+                            <th>Due Date</th>
+                            <th>Days Remaining</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in requests %}
+                            <tr>
+                                <td>{{ req.book.title }}</td>
+                                <td>{{ req.book.author }}</td>
+                                <td>
+                                    {% if req.status == 'pending' %}
+                                        <span class="status-badge status-pending">Pending</span>
+                                    {% elif req.status == 'approved' %}
+                                        {% if req.is_overdue() %}
+                                            <span class="status-badge status-overdue">⚠️ Overdue</span>
+                                        {% else %}
+                                            <span class="status-badge status-approved">Borrowed</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="status-badge">Returned</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ req.due_date.strftime('%Y-%m-%d') if req.due_date else '-' }}</td>
+                                <td>
+                                    {% if req.status == 'approved' %}
+                                        {% if req.is_overdue() %}
+                                            <strong style="color: red;">OVERDUE!</strong>
+                                        {% else %}
+                                            <strong>{{ req.days_remaining() }} days</strong>
+                                        {% endif %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty-message">📭 No book requests yet. Browse available books below!</div>
+            {% endif %}
+        </div>
+        
+        <!-- Available Books Section -->
+        <div class="section">
+            <h2>📚 Available Books by Category</h2>
+            {% if books_by_category %}
+                {% for category, books in books_by_category.items() %}
+                    <div style="margin-bottom: 40px;">
+                        <h3 style="color: #3b82f6; margin-bottom: 20px; font-size: 18px; padding-bottom: 10px; border-bottom: 2px solid #3b82f6;">
+                            📖 {{ category }} ({{ books|length }} books)
+                        </h3>
+                        <div class="books-grid">
+                            {% for book in books %}
+                                <div class="book-card">
+                                    <h3>{{ book.title }}</h3>
+                                    <p><strong>Author:</strong> {{ book.author }}</p>
+                                    <p><strong>ISBN:</strong> {{ book.isbn }}</p>
+                                    <p><strong>Available:</strong> {{ book.available_count }}</p>
+                                    <form method="POST" action="{{ url_for('web.request_book', book_id=book.id) }}">
+                                        <button type="submit" class="request-btn" {% if active_requests_count >= 3 %}disabled{% endif %}>
+                                            Request Book
+                                        </button>
+                                    </form>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-message">📪 No books available at the moment.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        setTimeout(function () {
+            document.querySelectorAll('.alert').forEach(function (alert) {
+                alert.style.opacity = '0';
+                setTimeout(function () {
+                    alert.remove();
+                }, 300);
+            });
+        }, 2000);
+    </script>
+</body>
+</html>

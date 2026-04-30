@@ -1,0 +1,16 @@
+services:
+  app:
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "5003:5000"
+    environment:
+      - FLASK_DEBUG=0
+      - DATABASE_URL=sqlite:////app/instance/library.db
+      - INIT_DB=0
+      - SECRET_KEY=${SECRET_KEY:-change-me}
+      - LOG_LEVEL=INFO
+      - RECOMMENDER_BACKEND=azure
+    volumes:
+      - ./instance:/app/instance

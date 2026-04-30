@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Survey - Library</title>
+    <style>
+        :root {
+            --ink: #0f172a;
+            --muted: #475569;
+            --paper: #ffffff;
+            --paper-2: #f8fafc;
+            --accent: #3b82f6;
+            --accent-2: #60a5fa;
+            --accent-3: #1e3a8a;
+            --shadow: 0 24px 60px rgba(15, 23, 42, 0.15);
+            --glass: rgba(255, 255, 255, 0.5);
+            --glass-strong: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.65);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at 15% 30%, rgba(37, 99, 235, 0.15), transparent 40%),
+                        radial-gradient(circle at 85% 70%, rgba(59, 130, 246, 0.15), transparent 40%),
+                        radial-gradient(circle at 50% 50%, rgba(96, 165, 250, 0.1), transparent 60%),
+                        linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #bfdbfe 100%);
+            color: var(--ink);
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.85);
+            color: var(--accent-3);
+            padding: 18px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(26px) saturate(1.2);
+            -webkit-backdrop-filter: blur(26px) saturate(1.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .navbar h1 {
+            font-family: inherit;
+            font-size: 28px;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar a {
+            color: var(--accent-3);
+            border: 1px solid rgba(30, 58, 138, 0.15);
+            padding: 8px 14px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-size: 13px;
+            background: rgba(255, 255, 255, 0.5);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .navbar a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+            background: rgba(59, 130, 246, 0.08);
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 36px auto 60px;
+            background: var(--glass);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        h2 {
+            font-family: inherit;
+            font-size: 30px;
+            color: var(--accent-3);
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            margin-bottom: 22px;
+        }
+
+        .question {
+            margin: 18px 0;
+            padding: 16px;
+            border-radius: 14px;
+            background: var(--glass-strong);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px) saturate(1.15);
+            -webkit-backdrop-filter: blur(20px) saturate(1.15);
+        }
+
+        .question label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--ink);
+        }
+
+        select,
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(31, 42, 32, 0.15);
+            background: #fff;
+            font-size: 14px;
+        }
+
+        .checkbox-grid label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: var(--muted);
+        }
+
+        .actions {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 999px;
+            margin-bottom: 18px;
+            font-size: 14px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-strong);
+            box-shadow: 0 10px 24px rgba(31, 42, 32, 0.08);
+            backdrop-filter: blur(20px) saturate(1.15);
+            -webkit-backdrop-filter: blur(20px) saturate(1.15);
+        }
+
+        .alert-success {
+            background-color: rgba(31, 107, 74, 0.12);
+            color: #065f46;
+            border-color: rgba(31, 107, 74, 0.3);
+        }
+
+        .alert-error {
+            background-color: rgba(162, 54, 47, 0.12);
+            color: #991b1b;
+            border-color: rgba(162, 54, 47, 0.3);
+        }
+
+        .alert-warning {
+            background-color: rgba(154, 107, 26, 0.12);
+            color: #92400e;
+            border-color: rgba(154, 107, 26, 0.3);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 18px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+            color: #ffffff;
+            text-decoration: none;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.39);
+        }
+
+        .link-muted {
+            color: var(--muted);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @media (max-width: 720px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>📚 Library Survey</h1>
+        <a href="{{ url_for('web.student_dashboard') }}">Back to dashboard</a>
+    </div>
+    <div class="container">
+        <h2>Find your next favorite book</h2>
+        <p class="subtitle">Answer a few questions and we will tailor recommendations just for you.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('web.survey_submit') }}">
+            <div class="question">
+                <label>Q1. What type of books do you enjoy reading? (required)</label><br>
+                <select name="genre_type">
+                    <option value="Both">Both</option>
+                    <option value="Fiction">Fiction</option>
+                    <option value="Non-Fiction">Non-Fiction</option>
+                </select>
+            </div>
+
+            <div class="question">
+                <label>Q2. How often do you read books? (required)</label><br>
+                <select name="frequency">
+                    <option value="Every day">Every day</option>
+                    <option value="A few times a week">A few times a week</option>
+                    <option value="Once a week">Once a week</option>
+                    <option value="A few times a month">A few times a month</option>
+                    <option value="Occasionally">Occasionally</option>
+                </select>
+            </div>
+
+            <div class="question">
+                <label>Q4. How do you like your books to feel? (required)</label><br>
+                <select name="mood">
+                    <option value="Light & Fun">Light & Fun</option>
+                    <option value="Deep & Thought-provoking">Deep & Thought-provoking</option>
+                    <option value="Action-packed & Fast-paced">Action-packed & Fast-paced</option>
+                    <option value="Emotional & Moving">Emotional & Moving</option>
+                    <option value="Educational & Informative">Educational & Informative</option>
+                </select>
+            </div>
+
+            <div class="question">
+                <label>Q5. How long do you prefer your books to be? (required)</label><br>
+                <select name="length">
+                    <option value="Any">Any</option>
+                    <option value="Short">Short (&lt;200 pages)</option>
+                    <option value="Medium">Medium (200-400 pages)</option>
+                    <option value="Long">Long (&gt;400 pages)</option>
+                </select>
+            </div>
+
+            <div class="question">
+                <label>Q6. Series or standalone? (required)</label><br>
+                <select name="series_pref">
+                    <option value="Series">Series</option>
+                    <option value="Standalone">Standalone</option>
+                    <option value="No preference">No preference</option>
+                </select>
+            </div>
+
+            <div class="question">
+                <label>Q7. Age group: (required)</label><br>
+                <select name="age_group">
+                    <option value="Under 13">Under 13</option>
+                    <option value="13-17">13-17</option>
+                    <option value="18-25">18-25</option>
+                    <option value="26-40">26-40</option>
+                    <option value="41-60">41-60</option>
+                    <option value="60+">60+</option>
+                </select>
+            </div>
+
+            <div class="question">
+                <label>Q8. Reading goal: (required)</label><br>
+                <select name="reading_goal">
+                    <option value="Pure entertainment & relaxation">Pure entertainment & relaxation</option>
+                    <option value="Learning a new skill or subject">Learning a new skill or subject</option>
+                    <option value="Personal growth & self-improvement">Personal growth & self-improvement</option>
+                    <option value="Exploring new cultures or perspectives">Exploring new cultures or perspectives</option>
+                    <option value="Academic or professional research">Academic or professional research</option>
+                </select>
+            </div>
+
+            <div class="question">
+                <label>Optional — Last 3 books you've read (leave blank to skip)</label><br>
+                <input type="text" name="last_book_1" placeholder="Book 1" style="width:100%; margin-bottom:6px;" />
+                <input type="text" name="last_book_2" placeholder="Book 2" style="width:100%; margin-bottom:6px;" />
+                <input type="text" name="last_book_3" placeholder="Book 3" style="width:100%;" />
+            </div>
+
+            <div class="question">
+                <label>Optional — Topics to avoid:</label>
+                <div class="checkbox-grid">
+                    <label><input type="checkbox" name="avoid_topics" value="Violence or Gore"> Violence or Gore</label>
+                    <label><input type="checkbox" name="avoid_topics" value="Romance or Mature Content"> Romance or Mature Content</label>
+                    <label><input type="checkbox" name="avoid_topics" value="Dark or Depressing themes"> Dark or Depressing themes</label>
+                    <label><input type="checkbox" name="avoid_topics" value="Political topics"> Political topics</label>
+                    <label><input type="checkbox" name="avoid_topics" value="Religious topics"> Religious topics</label>
+                    <label><input type="checkbox" name="avoid_topics" value="None"> None</label>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn" type="submit">Submit survey</button>
+                <a href="{{ url_for('web.student_dashboard') }}" class="link-muted">Back to dashboard</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

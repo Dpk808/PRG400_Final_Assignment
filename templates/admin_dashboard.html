@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard - Library System</title>
+    <style>
+        :root {
+            --ink: #0f172a;
+            --muted: #475569;
+            --paper: #ffffff;
+            --paper-2: #f8fafc;
+            --accent: #3b82f6;
+            --accent-2: #60a5fa;
+            --accent-3: #1e3a8a;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --shadow: 0 24px 60px rgba(15, 23, 42, 0.15);
+            --glass: rgba(255, 255, 255, 0.5);
+            --glass-strong: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.65);
+            --glass-dark: rgba(30, 58, 138, 0.45);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at 15% 30%, rgba(37, 99, 235, 0.15), transparent 40%),
+                        radial-gradient(circle at 85% 70%, rgba(59, 130, 246, 0.15), transparent 40%),
+                        radial-gradient(circle at 50% 50%, rgba(96, 165, 250, 0.1), transparent 60%),
+                        linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #bfdbfe 100%);
+            color: var(--ink);
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.85);
+            color: var(--accent-3);
+            padding: 18px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(26px) saturate(1.2);
+            -webkit-backdrop-filter: blur(26px) saturate(1.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .navbar h1 {
+            font-family: inherit;
+            font-size: 28px;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .user-info {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .logout-btn {
+            color: #000000;
+            border: 1px solid rgba(30, 58, 138, 0.15);
+            padding: 8px 14px;
+            border-radius: 999px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 13px;
+            transition: transform 0.2s ease, background 0.2s ease;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+            background: rgba(59, 130, 246, 0.08);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 32px auto 60px;
+            padding: 0 24px;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 999px;
+            margin-bottom: 18px;
+            font-size: 14px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-strong);
+            transition: opacity 0.3s ease;
+            box-shadow: 0 10px 24px rgba(31, 42, 32, 0.08);
+            backdrop-filter: blur(20px) saturate(1.15);
+            -webkit-backdrop-filter: blur(20px) saturate(1.15);
+        }
+
+        .alert-success {
+            background-color: rgba(31, 107, 74, 0.12);
+            color: var(--success);
+            border-color: rgba(31, 107, 74, 0.3);
+        }
+
+        .alert-error {
+            background-color: rgba(162, 54, 47, 0.12);
+            color: var(--danger);
+            border-color: rgba(162, 54, 47, 0.3);
+        }
+
+        .alert-warning {
+            background-color: rgba(154, 107, 26, 0.12);
+            color: var(--warning);
+            border-color: rgba(154, 107, 26, 0.3);
+        }
+
+        .section {
+            background: var(--glass);
+            padding: 28px;
+            border-radius: 18px;
+            margin-bottom: 26px;
+            box-shadow: var(--shadow);
+            animation: rise 0.6s ease both;
+            backdrop-filter: blur(24px) saturate(1.2);
+            -webkit-backdrop-filter: blur(24px) saturate(1.2);
+            border: 1px solid var(--glass-border);
+        }
+
+        .section h2 {
+            font-family: inherit;
+            color: var(--accent-3);
+            margin-bottom: 18px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            background: rgba(226, 232, 240, 0.7);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--ink);
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tr:hover {
+            background: rgba(47, 111, 90, 0.06);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .status-pending {
+            background: rgba(154, 107, 26, 0.15);
+            color: var(--warning);
+        }
+
+        .status-approved {
+            background: rgba(31, 107, 74, 0.15);
+            color: var(--success);
+        }
+
+        .status-overdue {
+            background: rgba(162, 54, 47, 0.15);
+            color: var(--danger);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-approve {
+            background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.39);
+        }
+
+        .btn-approve:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+        }
+
+        .btn-reject {
+            background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(220, 38, 38, 0.39);
+        }
+
+        .btn-reject:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+        }
+
+        .btn-return {
+            background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.39);
+        }
+
+        .btn-return:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: var(--muted);
+            font-size: 16px;
+        }
+
+        .deadline-warning {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .deadline-warning-severe {
+            background: rgba(162, 54, 47, 0.15);
+            color: var(--danger);
+            padding: 3px 8px;
+            border-radius: 999px;
+        }
+
+        @keyframes rise {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 720px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .navbar-right {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>📚 BookSphere Library</h1>
+        <div class="navbar-right">
+            <div class="user-info">👤 Welcome, <strong>{{ current_user.username }}</strong> (Admin/Librarian)</div>
+            <a href="{{ url_for('web.logout') }}" class="logout-btn">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Pending Requests Section -->
+        <div class="section">
+            <h2>📋 Pending Book Requests ({{ pending_requests|length }})</h2>
+            {% if pending_requests %}
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Book Title</th>
+                                <th>Author</th>
+                                <th>Request Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for req in pending_requests %}
+                                <tr>
+                                    <td>{{ req.user.username }}</td>
+                                    <td>{{ req.book.title }}</td>
+                                    <td>{{ req.book.author }}</td>
+                                    <td>{{ req.request_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <form method="POST" action="{{ url_for('web.approve_request', request_id=req.id) }}" style="display: inline;">
+                                                <button type="submit" class="btn btn-approve">✓ Approve</button>
+                                            </form>
+                                            <form method="POST" action="{{ url_for('web.reject_request', request_id=req.id) }}" style="display: inline;">
+                                                <button type="submit" class="btn btn-reject">✕ Reject</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-message">✅ No pending requests!</div>
+            {% endif %}
+        </div>
+        
+        <!-- Active Borrowings Section -->
+        <div class="section">
+            <h2>📤 Active Borrowings ({{ active_borrowings|length }})</h2>
+            {% if active_borrowings %}
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Book Title</th>
+                                <th>Author</th>
+                                <th>Borrowed Date</th>
+                                <th>Due Date</th>
+                                <th>Days Remaining</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for req in active_borrowings %}
+                                <tr>
+                                    <td>{{ req.user.username }}</td>
+                                    <td>{{ req.book.title }}</td>
+                                    <td>{{ req.book.author }}</td>
+                                    <td>{{ req.request_date.strftime('%Y-%m-%d') }}</td>
+                                    <td>{{ req.due_date.strftime('%Y-%m-%d') }}</td>
+                                    <td>
+                                        {% if req.is_overdue() %}
+                                            <span class="deadline-warning-severe">OVERDUE!</span>
+                                        {% else %}
+                                            <strong>{{ req.days_remaining() }} days</strong>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if req.is_overdue() %}
+                                            <span class="status-badge status-overdue">⚠️ Overdue</span>
+                                        {% else %}
+                                            {% if req.days_remaining() <= 2 %}
+                                                <span class="status-badge status-pending">⏰ Due Soon</span>
+                                            {% else %}
+                                                <span class="status-badge status-approved">Active</span>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="{{ url_for('web.return_book', request_id=req.id) }}" style="display: inline;">
+                                            <button type="submit" class="btn btn-return">📥 Mark Returned</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-message">📭 No active borrowings at the moment.</div>
+            {% endif %}
+        </div>
+        
+        <!-- Library Inventory Section -->
+        <div class="section">
+            <h2>📦 Library Inventory by Category</h2>
+            {% if books_by_category %}
+                {% for category, books in books_by_category.items() %}
+                    <div style="margin-bottom: 40px;">
+                        <h3 style="color: #3b82f6; margin-bottom: 20px; font-size: 18px; padding-bottom: 10px; border-bottom: 2px solid #3b82f6;">
+                            📖 {{ category }} ({{ books|length }} books)
+                        </h3>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Book Title</th>
+                                        <th>Author</th>
+                                        <th>ISBN</th>
+                                        <th>Available Copies</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for book in books %}
+                                        <tr>
+                                            <td>{{ book.title }}</td>
+                                            <td>{{ book.author }}</td>
+                                            <td>{{ book.isbn }}</td>
+                                            <td><strong>{{ book.available_count }}</strong></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-message">📪 No books in library.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        setTimeout(function () {
+            document.querySelectorAll('.alert').forEach(function (alert) {
+                alert.style.opacity = '0';
+                setTimeout(function () {
+                    alert.remove();
+                }, 300);
+            });
+        }, 2000);
+    </script>
+</body>
+</html>
