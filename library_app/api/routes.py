@@ -32,6 +32,20 @@ def _json_error(message: str, status: int):
 def health():
     return jsonify({"status": "ok"})
 
+# class BookRoute:
+#     def __init__(self):
+#         self.book_service = BookService()  # Hard dependency
+        
+#     def list_books(self):
+#         return self.book_service.get_available_books()
+    
+# @api_bp.get("/books")
+# def list_books():
+#     services = _services()
+#     book_service = services["book_service"] 
+#     return book_service.get_available_books()
+
+
 
 @api_bp.get("/books")
 def list_books():

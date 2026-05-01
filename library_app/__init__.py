@@ -2,6 +2,7 @@ import logging
 
 from dotenv import load_dotenv
 from flask import Flask
+from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.security import generate_password_hash
 
 from .config import Config
@@ -38,6 +39,8 @@ def _init_services(app: Flask) -> None:
         "rate_limiter": InMemoryRateLimiter(seconds=app.config["RATE_LIMIT_SECONDS"]),
     }
     app.extensions["services"] = services
+    
+
 
 
 def _maybe_init_db(app: Flask) -> None:
@@ -65,6 +68,7 @@ def create_app(config_object: object | None = None) -> Flask:
         app.config.from_object(config_object)
 
     _configure_logging(app)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
     db.init_app(app)
     login_manager.init_app(app)
