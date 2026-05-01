@@ -73,3 +73,6 @@ For recommendations, Docker Compose loads Azure credentials from `.env` and uses
 ## Default Credentials (Seed Data)
 - Admin: `admin` / `admin123`
 - Student: `student1` / `pass123`
+
+
+## Final project also has nginx configured which can be accessed via: www.booksphere.com:8000
